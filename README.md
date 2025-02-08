@@ -66,7 +66,7 @@ python pre_train.py --dataset FER13 \
 
 Then, train the model with the following script.
 ```
-python train.py --config_path config/FER13.yaml
+python train.py --config_path config/FER13.json
 ```
 make sure to replace the path to the pre-trained model in the config file. 
 
