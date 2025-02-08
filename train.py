@@ -42,7 +42,7 @@ class TrainClassifier:
                 net = ResNet18()
         if 'ispretrained' in model_config:
             if model_config['ispretrained']:
-                state_dict = torch.load(model_config['pretrained_model_path'])
+                state_dict = torch.load(model_config['pretrained_model_path'],weights_only=False)
                 if 'model' in state_dict.keys():
                     state_dict = state_dict['model']
                 else:
@@ -99,15 +99,28 @@ class TrainClassifier:
 
         img_size = 48 if data_config['name'] == 'FER13' else 96 if data_config['name'] == 'RAF' else 112
 
+        #将 Grayscale 移到 ToTensor 之前
+        #确保图像在进入 Normalize 之前已经是3通道
+        #这样修改后，转换流程为：
+        #先进行数据增强（RandomCrop, RandomHorizontalFlip）
+        #转换为3通道图像#
+        #转换为tensor
+        #最后进行标准化
         train_transform = transforms.Compose(
-            [transforms.RandomCrop(img_size, padding=4), transforms.RandomHorizontalFlip(), transforms.ToTensor(),
+            [transforms.RandomCrop(img_size, padding=4),
+             transforms.RandomHorizontalFlip(),
+             transforms.Grayscale(num_output_channels=3),
+             transforms.ToTensor(),
              transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))])
-        test_transform = transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.2, 0.2, 0.2))])
 
-        train_dataset = AffectDataset(self.config['dataset']['dir'], train=True, download=True,
+        test_transform = transforms.Compose(
+            [transforms.Grayscale(num_output_channels=3),
+             transforms.ToTensor(),
+             transforms.Normalize((0.5, 0.5, 0.5), (0.2, 0.2, 0.2))])
+
+        train_dataset = AffectDataset(self.config['dataset']['dir'], train=True,
                                       transform=train_transform)
-        test_dataset = AffectDataset(self.config['dataset']['dir'], train=False, download=True,
+        test_dataset = AffectDataset(self.config['dataset']['dir'], train=False,
                                      transform=test_transform)
 
         return train_dataset, test_dataset

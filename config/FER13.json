@@ -4,7 +4,7 @@
     "architecture": "resnet18",
     "target_classes": 7,
     "is_pretrained": false,
-    "pretrained_model_path": "path_to_saved_pre_trained_model/last.pth",
+    "pretrained_model_path": "./save/SupCon/FER13_models/SupCon_FER13_resnet50_lr_0.5_decay_0.0001_bsz_1024_temp_0.1_trial_0_cosine_warm/last.pth",
     "ispretrained": true
   },
   "train_parameters":
@@ -34,7 +34,7 @@
   "dataset":
   {
     "name": "FER13",
-    "dir": "data/FER13"
+    "dir": "./data/FER13"
   },
   "save_name": "FER13",
   "id": "1",

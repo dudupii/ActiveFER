@@ -1,18 +1,18 @@
 import os
 from PIL import Image
 from torchvision.datasets.vision import VisionDataset
-
-class ImageDataset(VisionDataset):
+from typing import Any, Callable, Optional, Tuple
+class AffectDataset(VisionDataset):
     def __init__(
         self,
         root: str,
         train: bool = True,
         transform: Optional[Callable] = None,
     ) -> None:
-        super(ImageDataset, self).__init__(root, transform=transform)
+        super(AffectDataset, self).__init__(root, transform=transform)
 
         self.train = train  # training set or test set
-        split = 'train' if self.train else 'val'
+        split = 'train' if self.train else 'test'
 
         self.data: Any = []
         self.targets = []

@@ -141,24 +141,26 @@ def set_loader(opt):
             transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)
         ], p=0.8),
         transforms.RandomGrayscale(p=0.2),
+        ## https://www.kikagaku.co.jp/kikagaku-blog/pytorch-torchvision/
+        transforms.Grayscale(num_output_channels=3),
+        #  : 1でグレースケール/ 3でカラー
         transforms.ToTensor(),
         normalize,
     ])
 
     if opt.dataset == 'FER13':
-        dir = '/scratch/a/amiilab/shuvendu/data/FER13'
+        dir = './data/FER13'
     elif opt.dataset == 'KDEF':
-        dir = '/scratch/a/amiilab/shuvendu/data/KDEF'
+        dir = './data/KDEF'
     elif opt.dataset == 'RAF':
-        dir = '/data/RAF-DB'
-
-        train_dataset = AffectDataset(dir, train=True, download=True, transform=TwoCropTransform(train_transform))
-
+        dir = './data/RAF-DB'
     elif opt.dataset == 'path':
         train_dataset = datasets.ImageFolder(root=opt.data_folder,
-                                            transform=TwoCropTransform(train_transform))
+                                     transform=TwoCropTransform(train_transform))
     else:
         raise ValueError(opt.dataset)
+    if opt.dataset in ['FER13','KDEF','RAF']:
+        train_dataset = AffectDataset(dir, train=True, transform=TwoCropTransform(train_transform))
 
     train_sampler = None
     train_loader = torch.utils.data.DataLoader(
